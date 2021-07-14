@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FactoryDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Manager" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Employee">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="First Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Last Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Start Work Year" Type="int" Nullable="false" />
+    <Property Name="DepartmentID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="EmployeeShift">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EmployeeID" Type="int" Nullable="false" />
+    <Property Name="ShiftID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="shift1">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Date" Type="datetime" Nullable="false" />
+    <Property Name="Start Time" Type="int" Nullable="false" />
+    <Property Name="End Time" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="user">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Full Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="User Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Num Of Actions" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="user_actions">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="user_id" Type="int" Nullable="false" />
+    <Property Name="actions" Type="int" Nullable="false" />
+    <Property Name="enterDate" Type="date" Nullable="false" />
+  </EntityType>
+  <EntityContainer Name="FactoryDBModelStoreContainer">
+    <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EmployeeShift" EntityType="Self.EmployeeShift" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="shift1" EntityType="Self.shift1" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="user" EntityType="Self.user" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="user_actions" EntityType="Self.user_actions" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

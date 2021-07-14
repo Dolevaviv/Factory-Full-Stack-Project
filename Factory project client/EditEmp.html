@@ -1,0 +1,216 @@
+<html>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let userid = urlParams.get('userid');
+  console.log(userid)
+  async function GreetHello() {
+    document.getElementById("full_name").innerText = "Hello " + sessionStorage.getItem('userFullname')
+  }
+
+
+  async function getEmployee() {
+    const urlParams1 = new URLSearchParams(window.location.search);
+    let employeeid = urlParams1.get('employeeid');
+    let resp1 = await fetch("https://localhost:44383/api/Employee/" + employeeid);
+    let data1 = await resp1.json();
+    console.log(data1);
+    document.getElementById("fName").value = data1[0].First_Name;
+    document.getElementById("lName").value = data1[0].Last_Name;
+    document.getElementById("startWorkYear").value = data1[0].Start_Work_Year;
+    document.getElementById("department_id").value = data1[0].DepartmentID;
+
+
+
+  }
+
+  async function getShifts() {
+    let resp = await fetch("https://localhost:44383/api/JShifts");
+    let shifts = await resp.json();
+    shifts.forEach(shift => {
+      let opt = document.createElement("option");
+      opt.innerText = shift.Date.slice(0, 10) + ", " + shift.Start_Time + " " + shift.End_Time;
+      opt.value = shift.ID;
+      document.getElementById("shifts").appendChild(opt);
+    });
+  }
+
+
+
+  //-----------update emp------------------//
+
+  async function updateEmployee() {
+    let status = await addAction();
+    if (status == true) {
+
+      const urlParams2 = new URLSearchParams(window.location.search);
+      let employeeid = urlParams2.get('employeeid');
+      let obj = {
+        First_Name: document.getElementById("fName").value,
+        Last_Name: document.getElementById("lName").value,
+        Start_Work_Year: document.getElementById("startWorkYear").value,
+        DepartmentID: document.getElementById("department_id").value
+
+      }
+      let fetchParams = {
+        method: 'PUT',
+        body: JSON.stringify(obj),
+        headers: { "Content-Type": "application/json" }
+      }
+
+      let resp = await fetch("https://localhost:44383/api/Employee/" + employeeid, fetchParams);
+      let status = await resp.json();
+      alert(status);
+      window.location.href = "employees.html?employees=" + userid;
+
+    }
+
+    const urlParams2 = new URLSearchParams(window.location.search);
+    let employeeid = urlParams2.get('employeeid');
+    let obj = {
+      First_Name: document.getElementById("First_Name").value,
+      Last_Name: document.getElementById("Last_Name").value,
+      Start_Work_Year: document.getElementById("Start_Work_Year").value,
+      DepartmentID: document.getElementById("DepartmentID").value
+
+    }
+    let fetchParams =
+    {
+      method: 'PUT',
+      body: JSON.stringify(obj),
+      headers: { "Content-Type": "application/json" }
+    }
+
+    let resp = await fetch("https://localhost:44383/api/Employee/" + employeeid, fetchParams);
+    let status1 = await resp.json();
+    alert(status1);
+    window.location.href = "employees.html?employees=" + userid;
+  }
+
+
+
+  async function deleteEmployee() {
+    let status = await addAction();
+    if (status == true) {
+      const urlParams3 = new URLSearchParams(window.location.search);
+      let employeeid = urlParams3.get('employeeid');
+      let fetchParams =
+      {
+        method: 'DELETE',
+        headers:
+          { "Content-Type": "application/json" }
+
+      }
+
+      let resp = await fetch("https://localhost:44383/api/Employee/" + employeeid, fetchParams);
+      let status = await resp.json();
+      alert(status);
+      window.location.href = "employees.html?userid=" + userid;
+
+
+    }
+
+
+  }
+  //---------------------add shifts to employee-----------------//
+
+
+  async function addShiftToEmployee() {
+    let status = await addAction();
+    if (status == true) {
+      const urlParams3 = new URLSearchParams(window.location.search);
+      let employeeid = urlParams3.get('employeeid');
+      let obj = {
+        EmployeeID: employeeid,
+        ShiftID: document.getElementById("shifts").value
+
+      }
+
+      let fetchParams = {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: { "Content-Type": "application/json" }
+      }
+
+      let resp = await fetch("https://localhost:44383/api/UpdateEmpShift", fetchParams);
+      let status = await resp.json();
+      alert(status);
+      window.location.href = "employees.html?employees=" + userid;
+
+    }
+
+
+
+
+  }
+
+
+
+
+  var outOfActions = false;
+  async function checkLogs(userid) {
+    var resp = await fetch("https://localhost:44383/api/Login/" + userid);
+    outOfActions = await resp.json();
+    if (outOfActions == true) {
+      alert("You are out of actions. Try again in 24 hours :)");
+      window.location.href = "Login.html";
+      return outOfActions;
+    } else {
+      return outOfActions;
+    }
+  }
+
+
+  async function addAction() {
+    let status = await checkLogs(userid);
+    if (status == false) {
+      let objToAct = { user_id: userid }
+      var addActParams = {
+        method: 'put',
+        body: JSON.stringify(objToAct),
+        headers: { "Content-type": "application/json" }
+      }
+      let addAction = await fetch("https://localhost:44383/api/Login/" + userid, addActParams);
+
+      return true;
+      console.log(added);
+    } else {
+      return false;
+    }
+  }
+
+  function HomePage() {
+    window.location.href = "Homepage.html?userid=" + userid;
+  }
+
+  function Employee() {
+    window.location.href = "employees.html?userid=" + userid;
+  }
+  function logout() {
+    window.location.href = "login.html";
+  }
+
+</script>
+
+<body onload="getEmployee(); GreetHello(); getShifts()">
+  <h3>Edit An Employee</h3><br><br>
+  Employee First Name : <input type="text" id="fName"><br> <br>
+  Employee Last Name : <input type="text" id="lName"><br> <br>
+  Start Working Year : <input type="text" id="startWorkYear"> <br> <br>
+  Department Number : <input type="text" id="department_id"> <br> <br>
+
+
+
+  <select id="shifts">
+    <option value="pick up shift">Pick the Shift</option>
+  </select><br><br>
+  <input type="button" value="Update Employee" onclick="updateEmployee()"><br><br>
+  <input type="button" value="Add shift to employee" onclick="addShiftToEmployee() "><br><br>
+  <input type="button" value="Delete Employee" onclick="deleteEmployee()"><br><br><br>
+  <input type="button" value="Employees" onclick="Employee()"><br>
+  <input type="button" value="Homepage" onclick="HomePage()"><br>
+  <input type="button" value="Logout" onclick="logout()"><br>
+  <span id="full_name"></span><br />
+
+</body>
+
+</html>

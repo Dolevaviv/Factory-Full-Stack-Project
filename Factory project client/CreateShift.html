@@ -1,0 +1,99 @@
+<html>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let userid = urlParams.get('userid');
+  function GreetHello() {
+    document.getElementById("full_name").innerText = "Hello " + sessionStorage.getItem('userFullname')
+  }
+
+  function logout() {
+    window.location.href = "login.html";
+  }
+
+  async function addShift() {
+    let status = await addAction();
+    if (status == true) {
+      const urlParams5 = new URLSearchParams(window.location.search);
+      let employeeid = urlParams5.get('employeeid');
+      let obj = {
+        Date: document.getElementById("date").value,
+        Start_Time: document.getElementById("startTime").value,
+        End_Time: document.getElementById("endTime").value
+
+
+      }
+      sessionStorage.setItem('date', obj.Date);
+      sessionStorage.setItem('startTime', obj.Start_Time);
+      sessionStorage.setItem('endTime', obj.End_Time);
+      let fetchParams = {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: { "Content-Type": "application/json" }
+      }
+
+      let resp = await fetch("https://localhost:44383/api/JShifts", fetchParams);
+      let status = await resp.json();
+      alert(status);
+
+      window.location.href = "shifts.html?userid=" + userid;
+    }
+  }
+  var outOfActions = false;
+
+  async function checkLogs(userid) {
+    var resp = await fetch("https://localhost:44383/api/Login/" + userid);
+    outOfActions = await resp.json();
+    if (outOfActions == true) {
+      alert("You are out of actions. try again in 24 hours :)");
+      window.location.href = "login.html";
+      return outOfActions;
+    } else {
+      return outOfActions;
+    }
+  }
+  async function addAction() {
+    let status = await checkLogs(userid);
+    if (status == false) {
+      let objToAct = { user_id: userid }
+      var addActParams = {
+        method: 'put',
+        body: JSON.stringify(objToAct),
+        headers: { "Content-type": "application/json" }
+      }
+      let addAction = await fetch("https://localhost:44383/api/Login/" + userid, addActParams);
+
+      return true;
+      console.log(added);
+    } else {
+      return false;
+    }
+  }
+
+
+
+  function logout() {
+    window.location.href = "login.html";
+  }
+  function HomePage() {
+    window.location.href = "Homepage.html?userid=" + userid;
+  }
+  function DirShift() {
+    window.location.href = "shifts.html?userid=" + userid;
+  }
+
+</script>
+
+<body>
+  <h3>Create A New Shift</h3>
+  <h3>Welcome, <span id="full_name"></span></h3><br><br>
+  Date : <input type="date" id="date"><br> <br>
+  Start Time : <input type="text" id="startTime"><br> <br>
+  End time : <input type="text" id="endTime"> <br> <br>
+  <input type="button" value="Submit" onclick="addShift()"><br><br>
+  <input type="button" value="Shifts" onclick="DirShift()"><br>
+  <input type="button" value="Homepage" onclick="HomePage()"><br>
+  <input type="button" value="Logout" onclick="logout()"><br><br>
+  <span id="full_name"></span>
+</body>
+
+</html>

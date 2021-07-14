@@ -1,0 +1,89 @@
+<html>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let userid = urlParams.get('userid');
+  function GreetHello() {
+    document.getElementById("full_name").innerText = "Hello " + sessionStorage.getItem('userFullname')
+
+  }
+  async function CreateDep() {
+    let status = await addAction();
+    if (status == true) {
+      let obj = {
+        Name: document.getElementById("department_name").value,
+        Manager: document.getElementById("department_manager").value
+
+      }
+      let fetchParams = {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: { "Content-Type": "application/json" }
+      }
+
+      let resp = await fetch("https://localhost:44383/api/Department", fetchParams);
+      let status = await resp.json();
+      alert(status);
+      window.location.href = "department.html?userid=" + userid;
+
+    }
+
+
+  }
+  var outOfActions = false;
+
+  async function checkLogs(userid) {
+    var resp = await fetch("https://localhost:44383/api/Login/" + userid);
+    outOfActions = await resp.json();
+    if (outOfActions == true) {
+      alert("You are out of actions. Try again in 24 hours :)");
+      window.location.href = "login.html";
+      return outOfActions;
+    } else {
+      return outOfActions;
+    }
+  }
+  async function addAction() {
+    let status = await checkLogs(userid);
+    if (status == false) {
+      let objToAct = { user_id: userid }
+      var addActParams = {
+        method: 'put',
+        body: JSON.stringify(objToAct),
+        headers: { "Content-type": "application/json" }
+      }
+      let addAction = await fetch("https://localhost:44383/api/Login/" + userid, addActParams);
+
+      return true;
+      console.log(added);
+    } else {
+      return false;
+    }
+  }
+
+
+  function HomePage() {
+    window.location.href = "Homepage.html?userid=" + userid;
+  }
+  function Departments() {
+    window.location.href = "department.html?userid=" + userid;
+  }
+  function logout() {
+    window.location.href = "login.html";
+  }
+
+
+</script>
+
+<body onload="GreetHello()">
+  <h1>Create A Department</h1><br />
+  Name:<input type="text" id="department_name"><br />
+  Manager:<input type="text" id="department_manager"><br /><br />
+  <input type="button" value="Submit" onclick="CreateDep()">
+  <br /> <br /> <br />
+  <input type="button" value="Departments" onclick="Departments()"><br>
+  <input type="button" value="Homepage" onclick="HomePage()"><br>
+  <input type="button" value="Logout" onclick="logout()"><br>
+  <span id="full_name"></span>
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+<html>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let userid = urlParams.get('userid');
+
+  function GreetHello() {
+    document.getElementById("full_name").innerText = "Hello " + sessionStorage.getItem('userFullname')
+  }
+  function logout() {
+    window.location.href = "Factory_Login.html";
+  }
+
+
+
+
+
+  function Employee() {
+    window.location.href = "employees.html?userid=" + userid;
+  }
+
+  async function getResult() {
+
+    let val = sessionStorage.getItem('value');
+    let resp = await fetch("https://localhost:44383/api/Employee");
+    let employees = await resp.json();
+    employees.forEach(emp => {
+      if (emp.First_Name.toUpperCase() == val || emp.Last_Name.toUpperCase() == val || emp.DepartmentID == val) {
+
+
+
+        let trObj = document.createElement("tr");
+        let tdfname = document.createElement("td");
+        let tdlname = document.createElement("td");
+        let tdDep = document.createElement("td");
+        tdfname.innerText = emp.First_Name;
+        tdlname.innerText = emp.Last_Name;
+        tdDep.innerText = emp.DepartmentID;
+        trObj.appendChild(tdfname);
+        trObj.appendChild(tdlname);
+        trObj.appendChild(tdDep);
+        document.getElementById("tbl").appendChild(trObj);
+
+
+      }
+
+    });
+
+
+
+
+
+
+
+  }
+
+</script>
+
+<body onload="getResult()">
+  <h3>Your results:</h3>
+
+
+  <table border="1" id="tbl"></table><br><br>
+  <input type="button" value="Back to Empolyees Table" onclick="Employee()"><br><br>
+</body>
+
+</html>

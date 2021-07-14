@@ -1,0 +1,88 @@
+<html>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let userid = urlParams.get('userid');
+  function GreetHello() {
+    document.getElementById("full_name").innerText = "Hello " + sessionStorage.getItem('userFullname')
+
+  }
+
+
+  async function getShift() {
+    let resp = await fetch("https://localhost:44383/api/JShifts");
+    let shifts = await resp.json();
+    console.log(shifts);
+    shifts.forEach(shift => {
+
+      let trObj = document.createElement("tr");
+      let tdID = document.createElement("td");
+      let tdDateShift = document.createElement("td");
+      let tdStartShift = document.createElement("td");
+      let tdEndShift = document.createElement("td");
+      tdID.innerText = shift.ID;
+      let tdeditobj = document.createElement("td");
+
+      tdeditobj = document.createElement("button");
+      tdeditobj.innerText = "Edit/Delete";
+
+      tdeditobj.onclick = function EditButton() {
+        activated = true;
+        if (activated = true) {
+          window.location.href = "EditShiftEmp.html?employeeid=" + shift.ID + "&userid=" + userid;;
+        }
+      }
+      let linkObj1 = document.createElement("a");
+      linkObj1.innerText = shift.Date.slice(0, 10);
+      linkObj1.href = "EditShiftEmp.html?employeeid=" + shift.ID + "&userid=" + userid;;
+      tdDateShift.appendChild(linkObj1);
+      tdStartShift.innerText = shift.Start_Time;
+      tdEndShift.innerText = shift.End_Time;
+
+      trObj.appendChild(tdID);
+
+      trObj.appendChild(tdDateShift);
+
+      trObj.appendChild(tdStartShift);
+      trObj.appendChild(tdEndShift);
+      trObj.appendChild(tdeditobj);
+      document.getElementById("tbl").appendChild(trObj);
+    });
+
+  }
+
+  function redirectAddShift() {
+    window.location.href = "CreateShift.html?userid=" + userid;
+  }
+
+  function redirectToEditShift() {
+
+    window.location.href = "Factory_EmployeeWithShifts.html?userid=" + userid;
+  }
+  function HomePage() {
+    window.location.href = "Homepage.html?userid=" + userid;
+  }
+  function logout() {
+    window.location.href = "login.html";
+  }
+</script>
+
+<body onload="getShift()">
+  <h1>Shift Menu</h1>
+  <br />
+  <table border="1" id="tbl">
+    <tr>
+      <th>ID</th>
+      <th>Date</th>
+      <th>Start time</th>
+      <th>End time</th>
+    </tr>
+  </table>
+  <br />
+  <input type="button" value="Add Shift" onclick="redirectAddShift()"><br><br>
+  <input type="button" value="Homepage" onclick="HomePage()"><br>
+  <input type="button" value="Logout" onclick="logout()"><br>
+
+  <span id="full_name"></span>
+</body>
+
+</html>

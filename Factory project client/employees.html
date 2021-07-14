@@ -1,0 +1,150 @@
+<html>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let userid = urlParams.get('userid');
+
+  function GreetHello() {
+    document.getElementById("full_name").innerText = "Hello " + sessionStorage.getItem('userFullname')
+
+  }
+  async function getNeeded() {
+    let val = document.getElementById('elastic').value.toUpperCase();
+    let resp = await fetch("https://localhost:44383/api/Employee");
+    let employees = await resp.json();
+    if (val != '') {
+      employees.forEach(emp => {
+
+
+
+        if (emp.First_Name.toUpperCase() == val || emp.Last_Name.toUpperCase() == val || emp.DepartmentID == val) {
+
+          window.location.href = "employee_SearchResults.html?userid=" + userid;
+
+          sessionStorage.setItem('value', val);
+
+
+
+
+
+
+        }
+        else {
+          document.getElementById('res').innerText = "No results...";
+
+        }
+      })
+    }
+
+    else {
+      document.getElementById('res').innerText = "";
+
+    }
+
+
+  }
+
+
+  async function LoadEmps() {
+    let resp = await fetch("https://localhost:44383/api/employee")
+    let employees = await resp.json();
+    console.log(employees);
+    employees.forEach(emp => {
+      let trObj = document.createElement("tr");
+
+      let tdFullName = document.createElement("td");
+
+      let linkObj = document.createElement("a");
+      linkObj.innerText = emp.First_Name + ' ' + emp.Last_Name;
+      linkObj.href = "EditEmp.html?employeeid=" + emp.ID + "&userid=" + userid;;
+      tdFullName.appendChild(linkObj);
+
+      let tdeditobj = document.createElement("td");
+
+      tdeditobj = document.createElement("button");
+      tdeditobj.innerText = "Edit/Delete";
+
+      tdeditobj.onclick = function EditButton() {
+        activated = true;
+        if (activated = true) {
+          window.location.href = "EditEmp.html?employeeid=" + emp.ID + "&userid=" + userid;
+        }
+      }
+      let tdStartYear = document.createElement("td");
+      tdStartYear.innerText = emp.Start_Work_Year;
+
+
+      let tdDepartment = document.createElement("td");
+      tdDepartment.innerText = emp.DepartmentID;
+
+
+      let tdShifts = document.createElement("td");
+      let tblObj = document.createElement("table");
+      tblObj.border = 1;
+
+
+      let tr1Obj = document.createElement("tr")
+
+
+      emp.shifts.forEach(sh => {
+        let tdDate = document.createElement("td");
+        tdDate.innerText = sh.Date.slice(0, 10) + ', ' + sh.Start_Time + ' - ' + sh.End_Time;
+        tr1Obj.appendChild(tdDate);
+
+
+      })
+
+
+      tblObj.appendChild(tr1Obj);
+
+      tdShifts.appendChild(tblObj);
+
+
+      trObj.appendChild(tdFullName);
+      trObj.appendChild(tdStartYear);
+      trObj.appendChild(tdDepartment);
+      trObj.appendChild(tdShifts);
+      trObj.appendChild(tdeditobj)
+      document.getElementById("tbl").appendChild(trObj);
+
+    });
+
+  }
+
+  function AddEmployee() {
+    window.location.href = "AddEmp.html";
+  }
+
+  function HomePage() {
+    window.location.href = "Homepage.html?userid=" + userid;
+  }
+  function logout() {
+    window.location.href = "login.html";
+  }
+</script>
+
+<body>
+
+  <body onload="LoadEmps();GreetHello()">
+    <input type="text" id="elastic" placeholder="search employee..." onkeyup="getNeeded()">
+
+    <br><br>
+    <span id="res"></span><br><br>
+    <h1>Employees</h1><br />
+    </table><br />
+    <table border="1" id="tbl">
+      <tr>
+        <th>Worker Full Name</th>
+        <th>Works Since</th>
+        <th>Department ID</th>
+        <th>Shift Schedule
+        </th>
+      </tr>
+    </table><br><br><br>
+    <input type="button" value="Add Employee" onclick="AddEmployee()"><br><br>
+    <input type="button" value="Homepage" onclick="HomePage()"><br><br>
+    <input type="button" value="Logout" onclick="logout()"><br>
+
+    <span id="full_name"></span>
+  </body>
+
+</html>

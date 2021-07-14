@@ -1,0 +1,55 @@
+<html>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let userid = urlParams.get('userid');
+
+  function LogOut() {
+    window.location.href = "login.html";
+  }
+
+  function MoveToDep() {
+    window.location.href = "department.html?userid=" + userid;
+
+  }
+  function MoveToEmp() {
+    window.location.href = "employees.html?userid=" + userid;
+
+
+  }
+
+  function MoveToShift() {
+    window.location.href = "shifts.html?userid=" + userid;
+
+
+  }
+  ///Display Name///
+  function GreetHello() {
+    document.getElementById("full_name").innerText = "Hello " + sessionStorage.getItem('userFullname')
+  }
+  let count = (function () {
+    let counter = 0;
+    return function () { return counter += 1; }
+
+  })();
+
+
+</script>
+
+<body onload="GreetHello()">
+  <h1>Welcome </h1>
+  <br />
+  <input type="button" value="Click here for Employees menu" onclick="MoveToEmp()">
+  <br />
+  <input type="button" value="Click here for Departments menu" onclick="MoveToDep()">
+  <br />
+  <input type="button" value="Click here for Shift Menu" onclick="MoveToShift()">
+  <br>
+  <br />
+  <br>
+  <br />
+  <input type="button" value="Log Out" onclick="LogOut()"><br />
+
+  <span id="full_name"></span>
+</body>
+
+</html>

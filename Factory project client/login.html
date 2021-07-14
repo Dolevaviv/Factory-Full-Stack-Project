@@ -1,0 +1,70 @@
+<html>
+
+<script>
+  async function login() {
+    let obj = {
+      User_Name: document.getElementById("username").value,
+      Password: document.getElementById("password").value
+    };
+
+    let fectParams = {
+      method: 'POST',
+      body: JSON.stringify(obj),
+      headers: { "Content-Type": "application/json" }
+    };
+
+    let resp = await fetch("https://localhost:44383/api/login", fectParams);
+    let result = await resp.json();
+    let resp2 = await fetch("https://localhost:44383/api/UserName");
+    let result2 = await resp2.json();
+    console.log(result);
+    if (result == null) {
+      document.getElementById("msg").innerText = "Wrong username or password!"
+
+    }
+    else {
+
+
+
+      let resp = await fetch("https://localhost:44383/api/Login");
+      let data = await resp.json();
+      console.log(data);
+      data.forEach(user => {
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+        if (user.User_Name == username && user.Password == password) {
+
+          sessionStorage.setItem('userid', user.ID);
+          sessionStorage.setItem('userFullname', user.Full_Name)
+
+          window.location.href = "Homepage.html?userid=" + user.ID;
+
+
+
+        }
+      });
+
+
+
+    }
+
+  }
+
+</script>
+
+<body>
+
+
+  <h1>Please Login</h1>
+
+  User Name : <input type="text" id="username"><br />
+  Password : <input type="password" id="password"><br />
+
+
+  <input type="button" value="Login" onclick="login()">
+
+  <div id="msg"></div><br />
+</body>
+
+
+</html>

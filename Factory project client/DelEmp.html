@@ -1,0 +1,37 @@
+<html>
+<script>
+  async function DelEmp() {
+    const urlParams = new URLSearchParams(window.location.search);
+    empID = urlParams.get('employee');
+
+    let fetchParams = {
+      method: 'DELETE',
+      headers: { "Content-Type": "application/json" }
+    };
+
+    let resp = await fetch("https://localhost:44383/api/employee/" + empID, fetchParams);
+    let status = await resp.json();
+    alert(status);
+    window.location.href = "employees.html"
+  }
+
+
+
+
+
+  async function GreetHello() {
+    var User = document.getElementById("fullname1")
+    User.innerText = "Hello " + sessionStorage.getItem('userFullname');
+  }
+</script>
+
+<body onload="GreetHello()">
+  <h1>Delete A Department</h1>
+  <br />
+  <span id="fullname1"></span><br />
+  <h3>Are you sure you want to delete this employee?</h3><input type="button" value="Yes" onclick="DelEmp()">
+</body>
+
+
+
+</html>
